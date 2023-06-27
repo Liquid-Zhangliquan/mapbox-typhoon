@@ -18,8 +18,10 @@ export default class Utils {
         }
 
         //路径线
-        routeFeatures.push(turf.lineString(routePoints.length == 1 ? [...routePoints, ...routePoints] : routePoints));
-
+        // routeFeatures.push(turf.lineString(routePoints.length == 1 ? [...routePoints, ...routePoints] : routePoints));
+        if (routePoints.length !== 0) {
+            routeFeatures.push(turf.lineString(routePoints.length == 1 ? [...routePoints, ...routePoints] : routePoints));
+        }
         return routeFeatures;
     };
     static generatePointFeature(typhoonPoint) {
@@ -34,6 +36,30 @@ export default class Utils {
         return turf.point(point, props);
     };
     static generateForecastFeatures(currentTyphoonPoint) {
+        let features = [];
+        //获取当前点的预测数据
+        // let forecastAgencys = currentTyphoonPoint.forecast;
+        let forecastAgencys = currentTyphoonPoint;
+        for (let i = 0, len = forecastAgencys.length; i < len; i++) {
+            const forecastAgency = forecastAgencys[i];
+            // 预测点
+            let forecastPoints = [];
+            forecastAgency.map((forecastpoint, idx) => {
+                let point = [+forecastpoint.longitude, +forecastpoint.latitude];
+                forecastPoints.push(point);
+                if (idx >= 1) {
+                    // 第一个点及当前台风点，不需要
+                    features.push(turf.point(point, {
+                        ...forecastpoint,
+                    }));
+                }
+            })
+            //预测线
+            features.push(turf.lineString(forecastPoints));
+        }
+        return features;
+    };
+    static _generateForecastFeatures(currentTyphoonPoint) {
         let features = [];
         //获取当前点的预测数据
         // let forecastAgencys = currentTyphoonPoint.forecast;
@@ -75,10 +101,10 @@ export default class Utils {
         // let rSE = radiusArr[1];
         // let rSW = radiusArr[2];
         // let rNW = radiusArr[3];
-        let rNE = radius.ne;
-        let rSE = radius.se;
-        let rSW = radius.sw;
-        let rNW = radius.nw;
+        let rNE = radius.ne || 0.01;// 0会报错？
+        let rSE = radius.se || 0.01;
+        let rSW = radius.sw || 0.01;
+        let rNW = radius.nw || 0.01;
 
         let lineArcOptions = {
             steps: 1024

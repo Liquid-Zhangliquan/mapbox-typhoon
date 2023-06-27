@@ -73,7 +73,7 @@ export default class TyphoonRouteLayer {
 
     update(typhoonPoints) {
         //typhoonPoints.pop();
-        // this.map.getSource(this.sourceId).setData(turf.featureCollection(Utils.generateRouteFeatures(typhoonPoints)));
+        this.map.getSource(this.sourceId).setData(turf.featureCollection(Utils.generateRouteFeatures(typhoonPoints)));
     }
     remove() {
         this.map.getLayer('track-route-line-layer') && this.map.removeLayer('track-route-line-layer')
