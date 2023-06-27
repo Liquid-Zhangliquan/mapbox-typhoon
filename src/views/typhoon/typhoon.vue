@@ -5,6 +5,11 @@
 </template>
 
 <script>
+import TyphoonCurrentLayer from './TyphoonCurrentLayer';
+import TyphoonForecastLayer from './TyphoonForecastLayer';
+import TyphoonRouteLayer from './TyphoonRouteLayer';
+import TyphoonWarnLineLayer from './TyphoonWarnLineLayer';
+import { typhoonData } from './data';
 export default {
   name: '',
   data() {
@@ -61,9 +66,23 @@ export default {
         zoom: 3.5,
         antialias: true,
       });
+      map.on('load', () => {
+        this.initTyphoon();
+      });
+    },
+    initTyphoon() {
+      console.log(typhoonData);
+      const { forecasts, tracks } = typhoonData.data;
+      const current = tracks[0];
+      window.typhoonWarnLineLayer = new TyphoonWarnLineLayer(map);
+      window.TyphoonRouteLayer = new TyphoonRouteLayer(map, tracks);
+      window.TyphoonForecastLayer = new TyphoonForecastLayer(map, current);
+      window.TyphoonWarnLineLayer = new TyphoonWarnLineLayer(map, current);
     },
   },
-  destroyed() {},
+  destroyed() {
+    window.typhoonWarnLineLayer && typhoonWarnLineLayer.remove();
+  },
 };
 </script>
 

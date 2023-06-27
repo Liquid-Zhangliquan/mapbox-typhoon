@@ -8,7 +8,7 @@ const routes =
     {
       path: '/',
       name: 'typhoon',
-      component: () => import('../views/typhoon.vue')
+      component: () => import('../views/typhoon/typhoon.vue')
     },
   ]
 
